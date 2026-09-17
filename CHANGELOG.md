@@ -2,6 +2,14 @@
 
 All notable changes to BrandKit are documented here.
 
+## [1.4.1] - 2026-09-17
+
+### Fixed
+- Live at brandkit.prompts2products.com. Three things only surfaced once it was deployed:
+  - `/api/names` returned `AiError 5028`: the model alias resolved to one Cloudflare deprecated on 2026-05-30. Now pinned to `@cf/meta/llama-3.1-8b-instruct-fp8`, chosen by running the real prompt against the account's current catalogue
+  - `not_found_handling` was set to `single-page-application`, so every unknown URL answered 200 with the homepage. BrandKit has no client-side routing, so that was a soft 404 inviting search engines to index junk URLs as duplicates. Unmatched paths now return a real 404
+  - The build copied all of `docs/` into the deploy, publishing the OG image source page and internal repo notes. Only `og-image.png` ships now
+
 ## [1.4.0] - 2026-09-17
 
 ### Added

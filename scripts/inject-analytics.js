@@ -42,10 +42,13 @@ html = html
 fs.mkdirSync(OUT, { recursive: true });
 fs.writeFileSync(path.join(OUT, "index.html"), html);
 
-// Copy docs/ (e.g. og-image.png) so Open Graph assets resolve, if present.
-const docs = path.join(ROOT, "docs");
-if (fs.existsSync(docs)) {
-  fs.cpSync(docs, path.join(OUT, "docs"), { recursive: true });
+// Copy only the published Open Graph asset out of docs/. The rest of that
+// folder is working material (the OG source page, repo notes) and has no
+// business being served from the site.
+const ogImage = path.join(ROOT, "docs", "og-image.png");
+if (fs.existsSync(ogImage)) {
+  fs.mkdirSync(path.join(OUT, "docs"), { recursive: true });
+  fs.copyFileSync(ogImage, path.join(OUT, "docs", "og-image.png"));
 }
 
 // Crawler and indexing files sit next to index.html in the deployed root.
