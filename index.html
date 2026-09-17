@@ -399,6 +399,13 @@ table.tbl th{font-family:var(--font-mono); font-size:11px; letter-spacing:.14em;
 /* ---------- nav ---------- */
 .brand{text-decoration:none}
 .logo-icon{display:block; border-radius:9px}
+.plain-list{list-style:none; padding:0; margin:0; display:grid; gap:var(--s-3); max-width:70ch}
+.plain-list li{color:var(--p2p-ink-3); font-size:15px; line-height:1.6}
+.plain-list b{color:var(--p2p-ink)}
+.faq-list{display:grid; grid-template-columns:1fr 1fr; gap:var(--s-6) var(--s-10); margin-top:var(--s-8); text-align:left}
+.faq-item h3{font-size:19px; margin-bottom:var(--s-2)}
+.faq-item p{color:var(--p2p-ink-3); font-size:15px; line-height:1.65; margin:0}
+@media (max-width:760px){.faq-list{grid-template-columns:1fr; gap:var(--s-6)}}
 .nav-links{display:flex; gap:var(--s-6); align-items:center}
 .nav-links a{color:var(--p2p-ink-2); text-decoration:none; font-size:15px; font-weight:500}
 .nav-links a:hover{color:var(--p2p-violet)}
@@ -598,6 +605,7 @@ table.tbl th{font-family:var(--font-mono); font-size:11px; letter-spacing:.14em;
       <a href="#how">How it works</a>
       <a href="#styles">Styles</a>
       <a href="#get">What you get</a>
+      <a href="#faq">Questions</a>
     </nav>
     <div style="display:flex;gap:8px;align-items:center">
       <button class="btn btn-ghost btn-sm hidden" id="restart-top">Start over</button>
@@ -645,7 +653,18 @@ table.tbl th{font-family:var(--font-mono); font-size:11px; letter-spacing:.14em;
         <h2>Pick a style</h2>
         <p>Pick the one that sounds like you. Everything gets built from it. If none of them fit, you can type your own.</p>
       </div>
-      <div class="vibe-grid" id="vibe-grid"></div>
+      <div class="vibe-grid" id="vibe-grid">
+        <ul class="plain-list">
+          <li><b>Bold and loud.</b> Hard to ignore.</li>
+          <li><b>Clean and techy.</b> Modern and tidy.</li>
+          <li><b>Fancy and posh.</b> Deep colours. Looks expensive.</li>
+          <li><b>Calm and natural.</b> Earthy and easy on the eyes.</li>
+          <li><b>Warm and handmade.</b> Made by a person, not a factory.</li>
+          <li><b>Playful and friendly.</b> Bright, round and fun.</li>
+          <li><b>Soft and pretty.</b> Gentle and quiet.</li>
+          <li><b>Serious and trusted.</b> Solid. People believe it.</li>
+        </ul>
+      </div>
     </div>
   </div>
 
@@ -656,10 +675,58 @@ table.tbl th{font-family:var(--font-mono); font-size:11px; letter-spacing:.14em;
         <h2>Here is everything you get</h2>
         <p>This is the stuff people pay designers for. You get all of it in about a minute, for free.</p>
       </div>
-      <div class="bento" id="get-grid"></div>
+      <div class="bento" id="get-grid">
+        <ul class="plain-list">
+          <li><b>A colour palette.</b> A main colour, a hover shade, a soft tint, a secondary, an accent, backgrounds, borders, four text shades, status colours and a full 50 to 900 scale.</li>
+          <li><b>Fonts that match.</b> One for headings, one for reading, one for small labels and code.</li>
+          <li><b>A logo.</b> Pick from more than 1,500 icons and ten outer shapes, in any colour from your palette.</li>
+          <li><b>Name ideas.</b> Built from what you actually do, not random word mashups.</li>
+          <li><b>A brand guide.</b> Seven pages you can save as a PDF and send to anyone.</li>
+          <li><b>Your colours as code.</b> CSS custom properties to paste into a stylesheet, plus a JSON export.</li>
+        </ul>
+      </div>
       <div style="text-align:center;margin-top:48px">
         <button class="btn btn-primary btn-lg" id="cta-bottom">Build my brand &rarr;</button>
         <p class="meta" style="margin-top:16px">Free. No sign up. Takes about a minute.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec" id="faq">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">Questions</div>
+        <h2>Questions people ask</h2>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item">
+          <h3>What is BrandKit?</h3>
+          <p>BrandKit is a free brand kit generator. You answer five plain-English questions about what you are making and the feeling you want, and it returns a complete brand identity: a colour palette, a font pairing, a logo, brand name ideas and a brand guide you can download or print. It runs in your browser and needs no account.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Is BrandKit free?</h3>
+          <p>Yes. BrandKit is free with no sign up, no card and no usage limit. It is a free tool by Prompts2Products.</p>
+        </div>
+        <div class="faq-item">
+          <h3>How does BrandKit choose colours?</h3>
+          <p>Colours are generated in the OKLCH colour space from your answers about style, brightness and how many colours you want. Every pair that carries text is checked for contrast and corrected before it renders, so the palette passes WCAG AA by construction rather than by luck.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Do I need design skills to use BrandKit?</h3>
+          <p>No. The questions are written in plain English, such as "how bright should the colours be?" and every answer shows you the actual colours it produces before you pick it. If none of the options fit, you can describe what you want in your own words.</p>
+        </div>
+        <div class="faq-item">
+          <h3>What can I download from BrandKit?</h3>
+          <p>You can copy your colours as CSS custom properties, download the whole kit as JSON, and save a printable brand guide as a PDF through your browser's print dialog.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Does BrandKit use AI?</h3>
+          <p>The brand itself is generated by code, not AI, so it is instant and cannot fail on an API. The only optional AI is a button on the results page that fetches extra brand name ideas. Everything else stays in your browser.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Is my brand data sent anywhere?</h3>
+          <p>No. BrandKit runs entirely in your browser and stores your answers only in your own browser's local storage. Nothing is uploaded unless you choose to press the optional AI name ideas button.</p>
+        </div>
       </div>
     </div>
   </div>

@@ -2,6 +2,15 @@
 
 All notable changes to BrandKit are documented here.
 
+## [1.4.0] - 2026-09-17
+
+### Added
+- A visible **Questions people ask** section carrying the same seven answers as the structured data. AI answer engines quote text on the page, not just JSON-LD, and a page whose answers exist only in a script tag gives them nothing to quote
+- Static content inside the Styles and What you get sections, replaced by the rich grids once JavaScript runs. Most AI crawlers do not execute JavaScript, and those two sections previously rendered as empty divs to anything that did not
+
+### Changed
+- Static text a non-JavaScript crawler can read went from 1,710 to about 4,400 characters
+
 ## [1.3.0] - 2026-09-17
 
 ### Changed
