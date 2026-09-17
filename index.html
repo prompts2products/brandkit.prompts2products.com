@@ -345,6 +345,17 @@ table.tbl th{font-family:var(--font-mono); font-size:11px; letter-spacing:.14em;
 .sheet-count{font-size:13px; color:var(--p2p-ink-3); margin:0 0 var(--s-4)}
 .sheet-empty{padding:var(--s-8) 0; text-align:center; color:var(--p2p-ink-3)}
 .icon-grid.lib{grid-template-columns:repeat(auto-fill,minmax(58px,1fr))}
+.ink-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(112px,1fr)); gap:var(--s-2)}
+.ink-pick{
+  display:flex; align-items:center; gap:9px; padding:8px 11px;
+  border:1.5px solid var(--p2p-line-2); border-radius:var(--r-md);
+  background:var(--p2p-white); color:var(--p2p-ink-2); font-size:13px; font-family:inherit;
+  cursor:pointer; transition:all .12s ease; text-align:left;
+}
+.ink-pick i{width:19px; height:19px; border-radius:6px; flex:none; box-shadow:inset 0 0 0 1.5px rgba(61,44,30,.10)}
+.ink-pick span{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.ink-pick:hover{border-color:var(--p2p-violet-light); background:var(--p2p-violet-wash)}
+.ink-pick.on{border-color:var(--p2p-violet); box-shadow:inset 0 0 0 1px var(--p2p-violet)}
 /* Newsletter invite. A corner card on desktop, a bottom sheet on phones.
    Never a full screen interstitial: Google demotes those on mobile, and
    they are horrible anyway. */
@@ -357,22 +368,14 @@ table.tbl th{font-family:var(--font-mono); font-size:11px; letter-spacing:.14em;
 .nl.show{opacity:1; transform:none; pointer-events:auto}
 .nl h4{font-size:19px; margin-bottom:6px}
 .nl p{font-size:14px; color:var(--p2p-ink-3); margin:0 0 var(--s-4); line-height:1.5}
-.nl form{display:flex; gap:var(--s-2)}
-.nl .field{flex:1; font-size:15px; padding:11px var(--s-3)}
-.nl .btn{white-space:nowrap}
+.nl-embed{width:100%; height:160px; display:block; margin-top:var(--s-2); color-scheme:light}
 .nl-x{
   position:absolute; top:10px; right:10px; width:30px; height:30px; border-radius:var(--r-full);
   border:0; background:transparent; color:var(--p2p-ink-4); font-size:19px; line-height:1; cursor:pointer;
 }
 .nl-x:hover{background:var(--p2p-sunken); color:var(--p2p-ink)}
-.nl-note{font-size:12px; color:var(--p2p-ink-4); margin:var(--s-3) 0 0}
-.nl-done{display:none}
-.nl.done .nl-form{display:none}
-.nl.done .nl-done{display:block}
 @media (max-width:640px){
   .nl{right:8px; left:8px; bottom:8px; width:auto; padding:var(--s-5); border-radius:var(--r-lg)}
-  .nl form{flex-direction:column}
-  .nl .btn{width:100%; justify-content:center}
 }
 @media (prefers-reduced-motion:reduce){ .nl{transition:none} }
 .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0}
@@ -563,12 +566,14 @@ table.tbl th{font-family:var(--font-mono); font-size:11px; letter-spacing:.14em;
 .p-cover .big{font-family:var(--font-display); font-size:64px; font-weight:800; letter-spacing:-.035em; line-height:1.02; color:var(--p2p-ink)}
 .p-grid{display:grid; gap:5mm}
 .p-sw{border-radius:10px; overflow:hidden; border:1.5px solid var(--p2p-line-2); background:#fff}
-.p-sw .chip{height:26mm; display:flex; align-items:flex-end; padding:3mm; font-family:var(--font-mono); font-size:8px}
+.p-sw .chip{height:26mm; display:flex; align-items:flex-end; padding:3mm; font-family:var(--font-mono); font-size:8px; border:0; border-radius:0}
 .p-sw .lab{padding:2.5mm 3mm 3mm}
 .p-sw .lab b{display:block; font-size:11px; color:var(--p2p-ink); font-weight:600}
 .p-sw .lab span{display:block; font-family:var(--font-mono); font-size:9px; color:var(--p2p-ink-3)}
 .p-tbl{width:100%; border-collapse:collapse; font-size:10px}
-.p-tbl td,.p-tbl th{padding:2mm 1mm; border-bottom:1px solid var(--p2p-line); text-align:left}
+.p-tbl td,.p-tbl th{padding:2mm 1mm; border-bottom:1px solid currentColor; text-align:left}
+.p-tbl td{border-bottom-color:rgba(128,128,128,.25)}
+.p-tbl th{border-bottom-color:rgba(128,128,128,.4)}
 .p-tbl th{font-family:var(--font-mono); font-size:8px; letter-spacing:.14em; text-transform:uppercase; color:var(--p2p-ink-3); font-weight:500}
 .p-card{background:#fff; border:1.5px solid var(--p2p-line-2); border-radius:12px; padding:5mm}
 .p-mono{font-family:var(--font-mono); font-size:9px; line-height:1.75; white-space:pre; background:var(--p2p-sunken); border-radius:8px; padding:4mm; overflow:hidden}
@@ -744,6 +749,7 @@ table.tbl th{font-family:var(--font-mono); font-size:11px; letter-spacing:.14em;
     <div class="sheet-body">
       <p class="sheet-count" id="icon-count"></p>
       <div class="icon-grid lib" id="icon-results"></div>
+      <p class="sheet-empty" id="icon-empty" style="display:none">Nothing matches that. Try a simpler word, like bread, key or leaf.</p>
     </div>
   </div>
 </div>
@@ -752,17 +758,11 @@ table.tbl th{font-family:var(--font-mono); font-size:11px; letter-spacing:.14em;
   <div class="nl-form">
     <h4 id="nl-title">Want more free tools like this?</h4>
     <p>We build one every week and give it away. Colour, logos, landing pages, the lot. No spam, unsubscribe in one click.</p>
-    <form id="nl-go">
-      <label class="sr-only" for="nl-email">Your email address</label>
-      <input class="field" id="nl-email" type="email" required placeholder="you@example.com" autocomplete="email">
-      <button class="btn btn-primary btn-sm" type="submit">Send them</button>
-    </form>
-    <p class="nl-note">Free newsletter from Prompts2Products.</p>
-  </div>
-  <div class="nl-done">
-    <h4>One last step</h4>
-    <p>We opened Substack in a new tab. Confirm there and the tools start arriving.</p>
-    <a class="btn btn-ghost btn-sm" href="https://prompts2products.substack.com/subscribe" target="_blank" rel="noopener">Open it again</a>
+    <!-- src is set only when the card opens, so Substack is never called on a plain page view -->
+    <iframe class="nl-embed" id="nl-embed" title="Subscribe to the Prompts2Products newsletter"
+            data-src="https://prompts2products.substack.com/embed?transparent=1"
+            width="480" height="150" style="border:0;background:transparent" frameborder="0" scrolling="no"
+            loading="lazy"></iframe>
   </div>
 </aside>
 <div class="toast" id="toast"></div>
@@ -1265,18 +1265,40 @@ function markSVG(style,fg,ink,glyph){
     default: return '<rect x="4" y="4" width="56" height="56" rx="16" fill="'+fg+'"/>'+glyph;
   }
 }
+/* which palette colours the mark may be painted in */
+function logoInks(P){
+  return [
+    {k:"primary",label:"Primary",hex:P.primary},
+    {k:"primaryHover",label:"Darker",hex:P.primaryHover},
+    {k:"secondary",label:"Secondary",hex:P.secondary},
+    {k:"accent",label:"Accent",hex:P.accent},
+    {k:"ramp700",label:"Deep",hex:P.ramp[7].hex},
+    {k:"ramp300",label:"Light",hex:P.ramp[3].hex},
+    {k:"text",label:"Ink",hex:P.text},
+    {k:"success",label:"Success",hex:P.success},
+    {k:"warning",label:"Warning",hex:P.warning},
+    {k:"danger",label:"Danger",hex:P.danger}
+  ];
+}
+function logoInk(kit){
+  const P=kit.palette;
+  const found=logoInks(P).filter(c=>c.k===kit.ink)[0];
+  return found?found.hex:P.primary;
+}
 function logoSVG(kit,variant,px){
   const P=kit.palette, f=P.fonts;
+  const brand=logoInk(kit);
   const style=(kit.shape&&MARKS[kit.shape])?kit.shape:(MARK_BY_VIBE[kit.answers.vibe]||"square");
   const spec=MARKS[style]||MARKS.square, gsc=spec.scale||1;
   const name=kit.name, ini=initialsOf(name), iconKey=kit.icon||"sparkle";
   const ringy=!!spec.hollow;
   const inv=variant==="inverse";
-  const fg=inv?(P.dark?P.primary:"#FFFFFF"):P.primary;
-  const glyphFill=ringy?fg:(inv?(P.dark?P.onPrimary:P.primary):P.onPrimary);
+  const onBrand=bestInk(brand,"#101010","#FFFFFF");
+  const fg=inv?(P.dark?brand:"#FFFFFF"):brand;
+  const glyphFill=ringy?fg:(inv?(P.dark?onBrand:brand):onBrand);
   const glyph=glyphSVG(iconKey,glyphFill,ini,f.dw,f.display,gsc);
   if(variant==="mark"){
-    const mfg=P.primary, mglyph=glyphSVG(iconKey,ringy?mfg:P.onPrimary,ini,f.dw,f.display,gsc);
+    const mfg=brand, mglyph=glyphSVG(iconKey,ringy?mfg:onBrand,ini,f.dw,f.display,gsc);
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="'+(px||64)+'" height="'+(px||64)+'" role="img" aria-label="'+name+' mark">'+markSVG(style,mfg,P.onPrimary,mglyph)+'</svg>';
   }
   const wordFill=inv?"#FFFFFF":P.text;
@@ -1500,7 +1522,7 @@ function saveState(){
     try{
       localStorage.setItem(SAVE_KEY,JSON.stringify({
         v:1,view:currentView(),step,seed,answers,freeText,
-        icon:kit?kit.icon:null, shape:kit?kit.shape:null
+        icon:kit?kit.icon:null, shape:kit?kit.shape:null, ink:kit?kit.ink:null
       }));
     }catch(e){}
   },120);
@@ -1542,6 +1564,7 @@ function restoreState(){
     let touched=false;
     if(kit&&typeof s.icon==="string"&&iconExists(s.icon)){ kit.icon=s.icon; touched=true }
     if(kit&&typeof s.shape==="string"&&MARKS[s.shape]){ kit.shape=s.shape; touched=true }
+    if(kit&&typeof s.ink==="string"&&logoInks(kit.palette).some(c=>c.k===s.ink)){ kit.ink=s.ink; touched=true }
     if(touched){ renderKit(); buildDoc() }
     return true;
   }
@@ -1720,11 +1743,12 @@ function resolveAnswers(){
 function generate(fresh){
   const resolved=resolveAnswers();
   const keepShape=(!fresh&&kit&&kit.shape)?kit.shape:null;
+  const keepInk=(!fresh&&kit&&kit.ink)?kit.ink:null;
   if(fresh) seed=vibeSeed(resolved.vibe);
   const palette=buildPalette(resolved,seed);
   const suggestions=buildNames(resolved,seed);
   const name=(answers.brandName||"").trim()||suggestions[0];
-  kit={answers:resolved,palette,suggestions,name,seed,icon:defaultIcon(resolved,seed),shape:keepShape};
+  kit={answers:resolved,palette,suggestions,name,seed,icon:defaultIcon(resolved,seed),shape:keepShape,ink:keepInk};
   loadFonts(palette.fonts);
   $("home").classList.add("hidden");
   $("restart-top").classList.remove("hidden");
@@ -1757,10 +1781,17 @@ function shapeBtn(k){
   return '<button type="button" class="icon-pick'+(k===cur?" on":"")+'" data-shape="'+k+'" title="'+MARKS[k].label+'">'+
     '<svg viewBox="0 0 64 64" width="24" height="24">'+art+'</svg></button>';
 }
+function inkBtn(c){
+  const on=(kit.ink||"primary")===c.k;
+  return '<button type="button" class="ink-pick'+(on?" on":"")+'" data-ink="'+c.k+'" title="'+c.label+' · '+c.hex+'">'+
+    '<i style="background:'+c.hex+'"></i><span>'+c.label+'</span></button>';
+}
 function shapePicker(){
   return '<div class="panel" style="margin-top:16px">'+
     '<label class="lbl">Click a shape to change the outside</label>'+
-    '<div class="icon-grid">'+MARK_KEYS.map(shapeBtn).join("")+'</div></div>';
+    '<div class="icon-grid">'+MARK_KEYS.map(shapeBtn).join("")+'</div>'+
+    '<label class="lbl" style="margin-top:22px">And a colour, from your own palette</label>'+
+    '<div class="ink-grid">'+logoInks(kit.palette).map(inkBtn).join("")+'</div></div>';
 }
 function iconPicker(){
   const ind=matchIndustry(kit.answers.industry||"");
@@ -1790,6 +1821,42 @@ const ICON_ALIAS={
   health:["heart-pulse","stethoscope","pill","syringe","cross","activity"],
   beauty:["scissors","sparkles","gem","flower","brush"],
   sport:["dumbbell","bike","trophy","medal","target","volleyball"],
+  fitness:["dumbbell","bike","heart-pulse","trophy","target","activity","footprints"],
+  gym:["dumbbell","bike","trophy","target","activity"],
+  yoga:["leaf","moon","flower","sunrise","heart","droplet"],
+  wellness:["leaf","heart-pulse","droplet","sunrise","flower"],
+  dentist:["smile-plus","stethoscope","shield","sparkles","heart-pulse"],
+  doctor:["stethoscope","heart-pulse","pill","cross","shield"],
+  hair:["scissors","brush","sparkles","wind"],
+  nails:["hand","sparkles","brush","gem"],
+  garden:["flower","sprout","leaf","trees","shovel"],
+  farm:["tractor","wheat","egg","carrot","trees"],
+  church:["church","heart","users","book-open"],
+  charity:["heart-handshake","hand-heart","users","gift"],
+  school:["graduation-cap","book","backpack","pencil","apple"],
+  bank:["landmark","banknote","coins","piggy-bank","wallet"],
+  crypto:["bitcoin","coins","wallet","link","cpu"],
+  estate:["house","key","map-pin","building","landmark"],
+  builder:["hammer","wrench","hard-hat","ruler","drill"],
+  plumber:["wrench","droplet","shower-head","pipette"],
+  electric:["zap","plug","lightbulb","battery"],
+  bar:["wine","beer","martini","cup-soda"],
+  event:["party-popper","calendar","ticket","music","gift"],
+  wedding:["heart","gem","flower","cake","church"],
+  podcast:["mic","headphones","radio","audio-lines"],
+  video:["video","camera","clapperboard","film","play"],
+  writer:["pen-tool","feather","notebook","book-open","type"],
+  design:["palette","brush","pen-tool","shapes","layers"],
+  print:["printer","stamp","file-text","newspaper"],
+  security:["shield","lock","key","eye","fingerprint"],
+  delivery:["truck","package","bike","map-pin","box"],
+  storage:["warehouse","box","archive","container"],
+  energy:["zap","sun","wind","battery","fuel"],
+  eco:["leaf","recycle","sprout","earth","wind"],
+  space:["rocket","star","telescope","orbit","satellite"],
+  game:["gamepad-2","dice-5","puzzle","swords","joystick"],
+  book:["book-open","library","bookmark","scroll"],
+  law:["scale","gavel","landmark","shield","file-text"],
   music:["music","headphones","mic","guitar","radio","disc"],
   write:["pen-tool","pencil","notebook","book-open","feather","type"],
   photo:["camera","image","aperture","film","video"],
@@ -1811,7 +1878,10 @@ function iconSearch(q){
   const names=libNames();
   if(!n) return ICON_STARTER.filter(k=>lib()[k]);
   const hints=[];
-  Object.keys(ICON_ALIAS).forEach(k=>{ if(n.indexOf(k)!==-1||k.indexOf(n)===0) hints.push.apply(hints,ICON_ALIAS[k]) });
+  /* match either way round, so half typed words like "fitne" still land */
+  Object.keys(ICON_ALIAS).forEach(k=>{
+    if(n.length>2&&(n.indexOf(k)!==-1||k.indexOf(n)!==-1)) hints.push.apply(hints,ICON_ALIAS[k]);
+  });
   const starts=[],has=[],alias=[];
   names.forEach(name=>{
     const flat=name.replace(/-/g," ");
@@ -1828,10 +1898,11 @@ function renderIconResults(){
     ? (q.trim()?hits.length+(hits.length===240?"+ matches":" matches")
               :"Popular picks. Search to see all "+libNames().length.toLocaleString()+", free to use commercially.")
     : "";
-  $("icon-results").innerHTML=hits.length
-    ? hits.map(name=>iconBtn("lu:"+name)).join("")
-    : '<p class="sheet-empty">Nothing matches that. Try a simpler word, like bread, key or leaf.</p>';
-  $("icon-results").querySelectorAll("[data-icon]").forEach(b=>b.addEventListener("click",()=>{
+  const grid=$("icon-results"), empty=$("icon-empty");
+  grid.innerHTML=hits.length?hits.map(name=>iconBtn("lu:"+name)).join(""):"";
+  grid.style.display=hits.length?"":"none";
+  empty.style.display=hits.length?"none":"";
+  grid.querySelectorAll("[data-icon]").forEach(b=>b.addEventListener("click",()=>{
     kit.icon=b.dataset.icon; closeIconSheet(); renderKit(); buildDoc(); saveState(); toast(iconLabel(kit.icon)+" icon");
   }));
 }
@@ -1852,38 +1923,51 @@ document.addEventListener("keydown",e=>{
 });
 
 /* ------------------------------------------------------------
-   Optional AI names. Keyless and free, and the tool never depends
-   on it: if it is slow, rate limited or gone, the offline ideas
-   above are still sitting there.
+   Optional AI names. Served by our own /api/names endpoint on
+   Cloudflare Workers AI, so there is no key in this page and no
+   third party for the visitor to sign up to. Open the file
+   straight off disk and there is no endpoint, so the button says
+   so plainly instead of pretending. The offline ideas above never
+   depend on any of this.
    ------------------------------------------------------------ */
-function aiPrompt(){
+function aiBrief(){
   const a=kit.answers, v=VIBES[a.vibe];
   const cat=CATS.find(c=>c.k===a.cat);
-  const what=String(a.industry||"").trim()||(cat?cat.label.toLowerCase():"a small business");
-  return "Brand name ideas for "+what+". Style: "+v.label.toLowerCase()+", "+v.desc.toLowerCase()+
-    " Give 8 short brand names. One or two real words each, with a space between them, never smashed together. "+
-    "No explanations, no numbering, no quotes. Reply as a comma separated list only.";
-}
-function parseNames(txt){
-  return String(txt||"").split(/[,\n]/)
-    .map(t=>t.replace(/^[\s\-*\d.)\]"']+/,"").replace(/["'\s]+$/,"").trim())
-    .filter(t=>t.length>2&&t.length<26&&!/[:;!?]/.test(t)&&t.split(/\s+/).length<=3);
+  return {
+    what:String(a.industry||"").trim()||(cat?cat.label.toLowerCase():"a small business"),
+    style:v.label.toLowerCase()+", "+v.desc.toLowerCase()
+  };
 }
 function aiNames(btn){
   if(btn.disabled) return;
+  const label="Get more ideas from a free AI";
   btn.disabled=true; btn.textContent="Thinking...";
-  const done=msg=>{ btn.disabled=false; btn.textContent="Get more ideas from a free AI"; if(msg) toast(msg) };
-  const url="https://text.pollinations.ai/"+encodeURIComponent(aiPrompt());
-  const bail=setTimeout(()=>done("That free service is slow right now. Try again in a minute."),25000);
-  fetch(url).then(r=>r.ok?r.text():Promise.reject(r.status)).then(txt=>{
+  const done=msg=>{ btn.disabled=false; btn.textContent=label; if(msg) toast(msg) };
+  const ctrl=("AbortController" in window)?new AbortController():null;
+  const bail=setTimeout(()=>{ if(ctrl) ctrl.abort(); done("The model is slow right now. Try again in a minute.") },25000);
+
+  fetch("/api/names",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(aiBrief()),
+    signal:ctrl?ctrl.signal:undefined
+  }).then(async r=>{
+    /* a plain file or a static host answers with HTML or a 501, never JSON */
+    const isJson=(r.headers.get("content-type")||"").indexOf("application/json")!==-1;
+    return {ok:r.ok,isJson,j:isJson?await r.json().catch(()=>null):null};
+  }).then(({ok,isJson,j})=>{
     clearTimeout(bail);
+    if(!isJson||!j) return done("AI ideas only work on the deployed site, not a local copy.");
+    if(!ok||!j.names||!j.names.length){
+      return done("The model did not answer. The ideas above still stand.");
+    }
     const seen={}; kit.suggestions.forEach(n=>seen[n.toLowerCase()]=1);
-    const fresh=parseNames(txt).filter(n=>{const k=n.toLowerCase(); if(seen[k])return false; seen[k]=1; return true});
-    if(!fresh.length) return done("Nothing usable came back. The ideas above still stand.");
-    kit.suggestions=kit.suggestions.concat(fresh.slice(0,8));
-    renderKit(); buildDoc();
+    const fresh=j.names.filter(n=>{const k=String(n).toLowerCase(); if(seen[k])return false; seen[k]=1; return true});
+    if(!fresh.length) return done("No new ones this time. Try again for a different batch.");
+    kit.suggestions=kit.suggestions.concat(fresh);
+    renderKit(); buildDoc(); track("ai_names",{count:fresh.length});
     toast(fresh.length+" more ideas");
-  }).catch(()=>{ clearTimeout(bail); done("Could not reach that free service. Check your connection.") });
+  }).catch(()=>{ clearTimeout(bail); done("Could not reach the name service. Check your connection.") });
 }
 
 function renderKit(){
@@ -1925,7 +2009,7 @@ function renderKit(){
      '<p class="meta" style="margin-top:12px">Two short words or one made up word works best. Say it out loud before you commit.</p>'+
      '<hr style="border:0;border-top:1.5px solid var(--p2p-line);margin:20px 0">'+
      '<button class="btn btn-ghost btn-sm" type="button" id="ai-names">Get more ideas from a free AI</button>'+
-     '<p class="meta" style="margin-top:10px">Optional, and the only part of this tool that uses the internet. It sends what you do and your style to a free service called Pollinations. No sign up, no card. Everything else stays in your browser.</p>'+
+     '<p class="meta" style="margin-top:10px">Optional, and the only part of this tool that uses the internet. It sends what you do and your style to our own server for one model call. No sign up, no card. Everything else stays in your browser.</p>'+
      '</div></div></section>';
   /* colour */
   h+='<section class="block"><div class="block-head"><div class="eyebrow">Colour / anchor</div><h3>Your main colour</h3>'+
@@ -1991,6 +2075,10 @@ function wireResults(){
   document.querySelectorAll("[data-shape]").forEach(b=>b.addEventListener("click",()=>{
     kit.shape=b.dataset.shape; renderKit(); buildDoc(); saveState(); toast(MARKS[kit.shape].label);
   }));
+  document.querySelectorAll("[data-ink]").forEach(b=>b.addEventListener("click",()=>{
+    kit.ink=b.dataset.ink; renderKit(); buildDoc(); saveState();
+    toast(logoInks(kit.palette).filter(c=>c.k===kit.ink)[0].label+" logo");
+  }));
   document.querySelectorAll("[data-copy]").forEach(b=>b.addEventListener("click",()=>{
     copyText(b.dataset.copy); toast(b.dataset.copy+" copied");
   }));
@@ -2043,21 +2131,27 @@ $("dl-pdf").addEventListener("click",()=>{buildDoc();setTimeout(()=>window.print
    ============================================================ */
 function docSwatch(name,hex,note){
   const ink=bestInk(hex,"#0D0D0D","#FFFFFF");
-  return '<div class="p-sw"><div class="chip" style="background:'+hex+';color:'+ink+'">'+(note||"")+'</div>'+
-    '<div class="lab"><b>'+name+'</b><span>'+hex+'</span></div></div>';
+  const P=kit.palette;
+  return '<div class="p-sw" style="background:'+P.surface+';border-color:'+P.border+'">'+
+    '<div class="chip" style="background:'+hex+';color:'+ink+'">'+(note||"")+'</div>'+
+    '<div class="lab"><b style="color:'+P.text+'">'+name+'</b>'+
+    '<span style="color:'+P.text3+'">'+hex+'</span></div></div>';
 }
 function page(eyebrow,n,inner,bg){
-  return '<div class="page" style="background:'+(bg||"var(--p2p-cream)")+'">'+
-    (eyebrow?'<div class="page-eyebrow">'+eyebrow+'</div>':"")+inner+
-    '<div class="page-num">'+String(n).padStart(2,"0")+'</div></div>';
+  const P=kit&&kit.palette;
+  const paper=bg||(P?P.bg:"var(--p2p-cream)");
+  const ink=P?P.text3:"var(--p2p-ink-3)";
+  return '<div class="page" style="background:'+paper+';color:'+(P?P.text2:"var(--p2p-ink-2)")+'">'+
+    (eyebrow?'<div class="page-eyebrow" style="color:'+ink+'">'+eyebrow+'</div>':"")+inner+
+    '<div class="page-num" style="color:'+ink+'">'+String(n).padStart(2,"0")+'</div></div>';
 }
 function buildDoc(){
   if(!kit){$("doc").innerHTML="";return}
   const P=kit.palette,f=P.fonts,v=VIBES[kit.answers.vibe];
   const today=new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
-  const dfont='"'+f.display+'", system-ui, sans-serif';
-  const bfont='"'+f.body+'", system-ui, sans-serif';
-  const mfont='"'+f.mono+'", ui-monospace, monospace';
+  const dfont="'"+f.display+"', system-ui, sans-serif";
+  const bfont="'"+f.body+"', system-ui, sans-serif";
+  const mfont="'"+f.mono+"', ui-monospace, monospace";
   let d="";
 
   /* 01 cover */
@@ -2072,7 +2166,7 @@ function buildDoc(){
   /* 02 logo */
   d+=page("Logo",2,
     '<h2 style="font-family:'+dfont+';color:'+P.text+'">Your logo, three ways</h2>'+
-    '<p class="lead">Use the first one most of the time. Use the icon on its own for profile pictures and browser tabs. Always leave space around it. Never stretch it, tilt it, or change its colours.</p>'+
+    '<p class="lead" style="color:'+P.text3+'">Use the first one most of the time. Use the icon on its own for profile pictures and browser tabs. Always leave space around it. Never stretch it, tilt it, or change its colours.</p>'+
     '<div class="p-grid" style="grid-template-columns:repeat(3,1fr)">'+
       '<div class="p-card" style="background:'+P.bg+';border-color:'+P.border+';display:flex;flex-direction:column;align-items:center;justify-content:center;height:52mm">'+logoSVG(kit,"primary",230)+'</div>'+
       '<div class="p-card" style="background:'+P.surface+';border-color:'+P.border+';display:flex;align-items:center;justify-content:center;height:52mm">'+logoSVG(kit,"mark",80)+'</div>'+
@@ -2084,7 +2178,7 @@ function buildDoc(){
   /* 03 colour anchor */
   d+=page("Colour / anchor",3,
     '<h2 style="font-family:'+dfont+';color:'+P.text+'">'+(P.dark?"Your colour lifts every interaction":"Your colour carries every interaction")+'</h2>'+
-    '<p class="lead">Use it for buttons and links only. When someone hovers or clicks, it goes one shade darker. Nothing else does this job.</p>'+
+    '<p class="lead" style="color:'+P.text3+'">Use it for buttons and links only. When someone hovers or clicks, it goes one shade darker. Nothing else does this job.</p>'+
     '<div class="p-grid" style="grid-template-columns:repeat(5,1fr)">'+
       docSwatch("Primary",P.primary,"BUTTONS")+docSwatch("Primary hover",P.primaryHover,"HOVER")+
       docSwatch("Primary soft",P.primarySoft,"TINTS")+docSwatch("Secondary",P.secondary,"SUPPORTING")+
@@ -2097,14 +2191,14 @@ function buildDoc(){
   /* 04 surfaces, ink, status */
   d+=page("Colour / surfaces, ink and status",4,
     '<h2 style="font-family:'+dfont+';color:'+P.text+'">Backgrounds and text</h2>'+
-    '<p class="lead">No plain grey anywhere. Every one of these leans a little towards your main colour. Use flat colour only. No gradients.</p>'+
+    '<p class="lead" style="color:'+P.text3+'">No plain grey anywhere. Every one of these leans a little towards your main colour. Use flat colour only. No gradients.</p>'+
     '<div class="p-grid" style="grid-template-columns:repeat(5,1fr)">'+
       docSwatch("Background",P.bg)+docSwatch("Surface",P.surface)+docSwatch("Sunken",P.sunken)+
       docSwatch("Border",P.border)+docSwatch("Border strong",P.borderStrong)+'</div>'+
     '<div class="p-grid" style="grid-template-columns:repeat(5,1fr);margin-top:5mm">'+
       docSwatch("Text",P.text)+docSwatch("Text 2",P.text2)+docSwatch("Text 3",P.text3)+
       docSwatch("Success",P.success)+docSwatch("Danger",P.danger)+'</div>'+
-    '<table class="p-tbl" style="margin-top:6mm"><tr><th>Contrast pairing</th><th>Ratio</th><th>WCAG AA</th></tr>'+
+    '<table class="p-tbl" style="margin-top:6mm;color:'+P.text2+'"><tr><th style="color:'+P.text3+'">Contrast pairing</th><th style="color:'+P.text3+'">Ratio</th><th style="color:'+P.text3+'">WCAG AA</th></tr>'+
       [["Headline on background",P.text,P.bg],["Body on background",P.text2,P.bg],
        ["Meta on background",P.text3,P.bg],["Button label on primary",P.onPrimary,P.primary]]
       .map(r=>{const c=cr(r[1],r[2]);return '<tr><td>'+r[0]+'</td><td style="font-family:'+mfont+'">'+c.toFixed(1)+':1</td><td>'+(c>=4.5?"Pass":"Large text only")+'</td></tr>'}).join("")+
@@ -2113,7 +2207,7 @@ function buildDoc(){
   /* 05 typography */
   d+=page("Typography",5,
     '<h2 style="font-family:'+dfont+';color:'+P.text+'">Your fonts</h2>'+
-    '<p class="lead">'+f.display+' for big headings. '+f.body+' for everything you read. '+f.mono+' for small labels and code. No other fonts.</p>'+
+    '<p class="lead" style="color:'+P.text3+'">'+f.display+' for big headings. '+f.body+' for everything you read. '+f.mono+' for small labels and code. No other fonts.</p>'+
     '<div style="display:grid;grid-template-columns:1.25fr 1fr;gap:8mm;flex:1">'+
       '<div><div style="font-family:'+dfont+';font-weight:'+f.dw+';font-size:40px;letter-spacing:-.03em;line-height:1.05;color:'+P.text+'">Ship the idea today.</div>'+
       '<div style="font-family:'+mfont+';font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:'+P.text3+';margin:3mm 0 7mm">Display · '+f.display+' · tracking -0.03em · leading 1.08</div>'+
@@ -2128,7 +2222,7 @@ function buildDoc(){
   /* 06 spacing and tokens */
   d+=page("Spacing, radius and tokens",6,
     '<h2 style="font-family:'+dfont+';color:'+P.text+'">Everything is a multiple of four</h2>'+
-    '<p class="lead">Eleven sizes. If a number is not on this list, do not use it. Corners are 16px by default. Lines are thin. Use shadows rarely.</p>'+
+    '<p class="lead" style="color:'+P.text3+'">Eleven sizes. If a number is not on this list, do not use it. Corners are 16px by default. Lines are thin. Use shadows rarely.</p>'+
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8mm;flex:1">'+
       '<div><div style="display:flex;gap:2mm;align-items:flex-end;margin-bottom:6mm">'+
         [4,8,12,16,20,24,32,40,48,64,80].map(n=>'<div style="text-align:center"><div style="width:'+Math.min(n,40)/2+'mm;height:'+Math.min(n,40)/2+'mm;background:'+P.primary+';border-radius:3px;opacity:'+(0.35+n/140)+'"></div><div style="font-family:'+mfont+';font-size:7px;color:'+P.text3+';margin-top:1mm">'+n+'</div></div>').join("")+
@@ -2269,8 +2363,11 @@ function nlRemember(v){ try{ localStorage.setItem(NL_KEY,v) }catch(e){} }
   const show=()=>{
     if(shown||nlSeen()||!engaged||active<8) return;
     shown=true; stop();
+    const f=$("nl-embed");
+    if(f&&!f.src) f.src=f.dataset.src;
     el.classList.add("show"); el.setAttribute("aria-hidden","false");
-    track("newsletter_shown");
+    /* Substack owns the form, so we cannot see a signup. Ask once, then never again. */
+    nlRemember("shown"); track("newsletter_shown");
   };
   const tick=()=>{ if(document.visibilityState==="visible"){ active++; show() } };
   const start=()=>{ if(!timer) timer=setInterval(tick,1000) };
@@ -2288,14 +2385,6 @@ function nlRemember(v){ try{ localStorage.setItem(NL_KEY,v) }catch(e){} }
   };
   $("nl-close").addEventListener("click",()=>dismiss("closed"));
   addEventListener("keydown",e=>{ if(e.key==="Escape"&&el.classList.contains("show")) dismiss("closed") });
-  $("nl-go").addEventListener("submit",e=>{
-    e.preventDefault();
-    const email=$("nl-email").value.trim();
-    if(!email) return;
-    window.open("https://prompts2products.substack.com/subscribe?email="+encodeURIComponent(email),"_blank","noopener");
-    el.classList.add("done"); nlRemember("subscribed"); track("newsletter_submitted");
-    setTimeout(()=>{ el.classList.remove("show"); el.setAttribute("aria-hidden","true") },6000);
-  });
 })();
 
 try{ renderStep(); renderFan(); renderVibeGrid(); renderGetBento(); }catch(e){ console.error(e); }

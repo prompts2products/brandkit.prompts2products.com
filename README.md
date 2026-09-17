@@ -43,7 +43,7 @@ Every option previews the actual palette you'd get. If none of the options fit, 
 
 Everything runs in your browser. Your answers live in your own `localStorage` and nowhere else.
 
-The single exception is opt-in and clearly labelled: the **"Get more ideas from a free AI"** button on the results page sends your trade and style to [Pollinations](https://pollinations.ai) to fetch extra name suggestions. Don't press it and nothing leaves your machine.
+The single exception is opt-in and clearly labelled: the **"Get more ideas from a free AI"** button on the results page posts your trade and style to this site's own `/api/names` endpoint, which asks Cloudflare Workers AI for extra name suggestions. No key is ever in the page and no third party is involved. Don't press it and nothing leaves your machine.
 
 ## Run it locally
 
@@ -82,7 +82,7 @@ Set `GA_MEASUREMENT_ID` and `CLARITY_PROJECT_ID` as environment variables in the
 
 ## Credits
 
-Icons are [Lucide](https://lucide.dev) (ISC licence), inlined as compact draw commands so the tool still works offline. Fonts are served by Google Fonts. Optional AI names come from [Pollinations](https://pollinations.ai).
+Icons are [Lucide](https://lucide.dev) (ISC licence), inlined as compact draw commands so the tool still works offline. Fonts are served by Google Fonts. Optional AI names come from Cloudflare Workers AI, on its free allocation.
 
 ## Licence
 

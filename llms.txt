@@ -9,7 +9,7 @@ BrandKit is a single-page tool by [Prompts2Products](https://prompts2products.co
 - **Colour palette**: generated in the OKLCH colour space from the user's answers. Every pair that carries text is contrast-checked and corrected before it renders, so kits pass WCAG AA by construction rather than by luck. Output includes primary, hover, soft, secondary, accent, background, surface, borders, four ink steps, semantic status colours and a 50 to 900 ramp.
 - **Typography**: a display, body and monospace pairing matched to the chosen style, loaded from Google Fonts.
 - **Logo**: a mark built from a choice of 1,553 searchable icons (Lucide, ISC licence) plus 35 hand-drawn marks, inside a choice of 10 outer shapes. Downloadable as SVG.
-- **Name ideas**: generated offline from a 19-group trade lexicon crossed with real naming patterns, so a bakery gets "Wild Hearth" rather than a random word mashup. An optional button fetches extra ideas from a free AI service.
+- **Name ideas**: generated offline from a 19-group trade lexicon crossed with real naming patterns, so a bakery gets "Wild Hearth" rather than a random word mashup. An optional button fetches extra ideas from the site's own endpoint, backed by Cloudflare Workers AI.
 - **Downloads**: logo SVG, CSS custom properties, JSON, and a printable brand guide via the browser's print dialogue.
 
 ## How it works
@@ -19,7 +19,7 @@ The user answers five questions (what they are making, their style, how bright t
 ## Key facts
 
 - Price: free, with no sign up and no usage limit
-- Privacy: answers are stored only in the visitor's own browser local storage; nothing is uploaded unless the visitor presses the optional AI name ideas button
+- Privacy: answers are stored only in the visitor's own browser local storage; nothing is uploaded unless the visitor presses the optional AI name ideas button, which posts only the trade and style to the site's own endpoint
 - Technology: one HTML file, zero JavaScript dependencies, works offline
 - Accessibility: WCAG AA contrast enforced at generation time
 - Licence: MIT

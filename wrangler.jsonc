@@ -2,6 +2,12 @@
   "$schema": "https://unpkg.com/wrangler/config-schema.json",
   "name": "brandkit-prompts2products-com",
   "compatibility_date": "2026-09-17",
+  "main": "src/worker.js",
+
+  // Free allocation, no card. Powers POST /api/names only.
+  "ai": {
+    "binding": "AI"
+  },
 
   // Static site only: scripts/inject-analytics.js writes dist/ from index.html.
   "build": {
@@ -9,6 +15,11 @@
   },
   "assets": {
     "directory": "dist",
+    "binding": "ASSETS",
+
+    // Without this the SPA fallback would serve index.html for /api/names
+    // and the worker would never run.
+    "run_worker_first": ["/api/*"],
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "single-page-application"
   },
