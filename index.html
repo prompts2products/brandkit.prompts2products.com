@@ -2160,33 +2160,65 @@ function buildDoc(){
   const dfont="'"+f.display+"', system-ui, sans-serif";
   const bfont="'"+f.body+"', system-ui, sans-serif";
   const mfont="'"+f.mono+"', ui-monospace, monospace";
+  /* the guide is a document about the brand, handed to other people, so it
+     is written in the third person and names the brand rather than saying
+     "you". The tool itself still talks to the person using it. */
+  const nm=String(kit.name).replace(/&/g,"&amp;").replace(/</g,"&lt;");
   let d="";
 
   /* 01 cover */
   d+='<div class="page p-cover" style="background:'+P.bg+'">'+
     '<div style="font-family:'+mfont+';font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:'+P.text3+'">Brand guidelines · version 1.0</div>'+
     '<div>'+logoSVG(kit,"primary",300)+
-      '<div style="font-family:'+dfont+';font-weight:'+f.dw+';font-size:60px;letter-spacing:-.035em;line-height:1.02;color:'+P.text+';margin:10mm 0 4mm">'+kit.name+'</div>'+
+      '<div style="font-family:'+dfont+';font-weight:'+f.dw+';font-size:60px;letter-spacing:-.035em;line-height:1.02;color:'+P.text+';margin:10mm 0 4mm">'+nm+'</div>'+
       '<div style="font-family:'+bfont+';font-size:14px;color:'+P.text2+';max-width:70ch">'+v.label+'. '+v.desc+'</div></div>'+
     '<div style="display:flex;justify-content:space-between;align-items:flex-end;font-family:'+mfont+';font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:'+P.text3+'">'+
       '<span>'+today+'</span><span>Generated with BrandKit</span></div></div>';
 
   /* 02 logo */
   d+=page("Logo",2,
-    '<h2 style="font-family:'+dfont+';color:'+P.text+'">Your logo, three ways</h2>'+
-    '<p class="lead" style="color:'+P.text3+'">Use the first one most of the time. Use the icon on its own for profile pictures and browser tabs. Always leave space around it. Never stretch it, tilt it, or change its colours.</p>'+
+    '<h2 style="font-family:'+dfont+';color:'+P.text+'">The '+nm+' logo</h2>'+
+    '<p class="lead" style="color:'+P.text3+'">The primary lockup is the default and should be used wherever there is room for it. The mark on its own is reserved for profile images, app icons and browser tabs. Clear space of at least half the height of the mark is kept on every side. The logo is never stretched, tilted, recoloured or set on a busy background.</p>'+
     '<div class="p-grid" style="grid-template-columns:repeat(3,1fr)">'+
       '<div class="p-card" style="background:'+P.bg+';border-color:'+P.border+';display:flex;flex-direction:column;align-items:center;justify-content:center;height:52mm">'+logoSVG(kit,"primary",230)+'</div>'+
       '<div class="p-card" style="background:'+P.surface+';border-color:'+P.border+';display:flex;align-items:center;justify-content:center;height:52mm">'+logoSVG(kit,"mark",80)+'</div>'+
       '<div class="p-card" style="background:'+(P.dark?P.sunken:P.text)+';border-color:'+P.text+';display:flex;align-items:center;justify-content:center;height:52mm">'+logoSVG(kit,"inverse",210)+'</div>'+
     '</div>'+
     '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5mm;margin-top:3mm;font-family:'+mfont+';font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:'+P.text3+'">'+
-      '<span>Primary lockup</span><span>Mark only</span><span>On dark</span></div>');
+      '<span>Primary lockup</span><span>Mark only</span><span>On dark</span></div>'+
+
+    /* clear space and minimum sizes, the two things a brand manual is
+       actually asked for when someone else has to place the logo */
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8mm;margin-top:9mm">'+
+
+      '<div><div style="font-family:'+mfont+';font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:'+P.text3+';margin-bottom:4mm">Clear space</div>'+
+        '<div style="display:flex;align-items:center;gap:6mm;flex-wrap:wrap">'+
+          '<div style="position:relative;padding:9mm;border:1.5px dashed '+P.borderStrong+';border-radius:4px;flex:none">'+
+            '<div style="width:18mm;height:18mm;display:flex">'+logoSVG(kit,"mark",68)+'</div>'+
+            ['top:2.8mm;left:50%;transform:translateX(-50%)','bottom:2.8mm;left:50%;transform:translateX(-50%)',
+             'left:2.8mm;top:50%;transform:translateY(-50%)','right:2.8mm;top:50%;transform:translateY(-50%)']
+            .map(pos=>'<span style="position:absolute;'+pos+';font-family:'+mfont+';font-size:9px;color:'+P.primary+'">x</span>').join("")+
+          '</div>'+
+          '<p style="font-family:'+bfont+';font-size:11px;line-height:1.6;color:'+P.text2+';margin:0;min-width:46mm;flex:1">Nothing sits inside the dashed box. <b style="color:'+P.text+'">x</b> is half the height of the mark, and it is the minimum gap on every side, including the page edge.</p>'+
+        '</div></div>'+
+
+      '<div><div style="font-family:'+mfont+';font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:'+P.text3+';margin-bottom:4mm">Minimum size</div>'+
+        '<div style="display:flex;align-items:flex-end;gap:8mm">'+
+          '<div style="text-align:center"><div style="height:12mm;display:flex;align-items:flex-end;justify-content:center">'+logoSVG(kit,"mark",34)+'</div>'+
+            '<div style="font-family:'+mfont+';font-size:8px;color:'+P.text3+';margin-top:2.5mm">24px</div>'+
+            '<div style="font-size:9px;color:'+P.text3+'">Mark</div></div>'+
+          '<div style="text-align:center"><div style="height:12mm;display:flex;align-items:flex-end;justify-content:center">'+logoSVG(kit,"primary",125)+'</div>'+
+            '<div style="font-family:'+mfont+';font-size:8px;color:'+P.text3+';margin-top:2.5mm">120px</div>'+
+            '<div style="font-size:9px;color:'+P.text3+'">Lockup</div></div>'+
+        '</div>'+
+        '<p style="font-family:'+bfont+';font-size:11px;line-height:1.6;color:'+P.text2+';margin:5mm 0 0">Below these sizes the mark loses its shape. Use the mark on its own rather than shrinking the full lockup further.</p>'+
+      '</div>'+
+    '</div>');
 
   /* 03 colour anchor */
   d+=page("Colour / anchor",3,
-    '<h2 style="font-family:'+dfont+';color:'+P.text+'">'+(P.dark?"Your colour lifts every interaction":"Your colour carries every interaction")+'</h2>'+
-    '<p class="lead" style="color:'+P.text3+'">Use it for buttons and links only. When someone hovers or clicks, it goes one shade darker. Nothing else does this job.</p>'+
+    '<h2 style="font-family:'+dfont+';color:'+P.text+'">The primary colour</h2>'+
+    '<p class="lead" style="color:'+P.text3+'">Primary is reserved for buttons and links. On hover and press it moves one shade darker. Nothing else in the interface carries it, which is what makes it mean something when it appears.</p>'+
     '<div class="p-grid" style="grid-template-columns:repeat(5,1fr)">'+
       docSwatch("Primary",P.primary,"BUTTONS")+docSwatch("Primary hover",P.primaryHover,"HOVER")+
       docSwatch("Primary soft",P.primarySoft,"TINTS")+docSwatch("Secondary",P.secondary,"SUPPORTING")+
@@ -2198,8 +2230,8 @@ function buildDoc(){
 
   /* 04 surfaces, ink, status */
   d+=page("Colour / surfaces, ink and status",4,
-    '<h2 style="font-family:'+dfont+';color:'+P.text+'">Backgrounds and text</h2>'+
-    '<p class="lead" style="color:'+P.text3+'">No plain grey anywhere. Every one of these leans a little towards your main colour. Use flat colour only. No gradients.</p>'+
+    '<h2 style="font-family:'+dfont+';color:'+P.text+'">Surfaces and ink</h2>'+
+    '<p class="lead" style="color:'+P.text3+'">None of these are neutral grey. Each one leans a little towards the primary hue, which is what holds the palette together. Flat colour throughout, with no gradients.</p>'+
     '<div class="p-grid" style="grid-template-columns:repeat(5,1fr)">'+
       docSwatch("Background",P.bg)+docSwatch("Surface",P.surface)+docSwatch("Sunken",P.sunken)+
       docSwatch("Border",P.border)+docSwatch("Border strong",P.borderStrong)+'</div>'+
@@ -2214,12 +2246,12 @@ function buildDoc(){
 
   /* 05 typography */
   d+=page("Typography",5,
-    '<h2 style="font-family:'+dfont+';color:'+P.text+'">Your fonts</h2>'+
-    '<p class="lead" style="color:'+P.text3+'">'+f.display+' for big headings. '+f.body+' for everything you read. '+f.mono+' for small labels and code. No other fonts.</p>'+
+    '<h2 style="font-family:'+dfont+';color:'+P.text+'">Typefaces</h2>'+
+    '<p class="lead" style="color:'+P.text3+'">'+f.display+' sets headings. '+f.body+' sets everything meant to be read at length. '+f.mono+' sets small labels and code. No other typeface appears in '+nm+' material.</p>'+
     '<div style="display:grid;grid-template-columns:1.25fr 1fr;gap:8mm;flex:1">'+
       '<div><div style="font-family:'+dfont+';font-weight:'+f.dw+';font-size:40px;letter-spacing:-.03em;line-height:1.05;color:'+P.text+'">Ship the idea today.</div>'+
       '<div style="font-family:'+mfont+';font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:'+P.text3+';margin:3mm 0 7mm">Display · '+f.display+' · tracking -0.03em · leading 1.08</div>'+
-      '<div style="font-family:'+bfont+';font-size:12px;line-height:1.65;color:'+P.text2+';max-width:62ch">Write the way you talk. A 10 year old should be able to read it. If you would not say it out loud to a friend, write it again. Never go smaller than 14px on a screen.</div>'+
+      '<div style="font-family:'+bfont+';font-size:12px;line-height:1.65;color:'+P.text2+';max-width:62ch">'+nm+' writes the way people speak. Sentences stay short enough for a ten year old to follow, and anything that would sound wrong said out loud is written again. Body text never drops below 14px on screen.</div>'+
       '<div style="font-family:'+mfont+';font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:'+P.text3+';margin-top:3mm">Body · '+f.body+' · leading 1.55 to 1.75</div></div>'+
       '<table class="p-tbl"><tr><th>Role</th><th>Size</th><th>Weight</th></tr>'+
       [["Display","56px","800"],["Heading 1","36px","700"],["Heading 2","28px","700"],["Heading 3","24px","600"],
@@ -2229,8 +2261,8 @@ function buildDoc(){
 
   /* 06 spacing and tokens */
   d+=page("Spacing, radius and tokens",6,
-    '<h2 style="font-family:'+dfont+';color:'+P.text+'">Everything is a multiple of four</h2>'+
-    '<p class="lead" style="color:'+P.text3+'">Eleven sizes. If a number is not on this list, do not use it. Corners are 16px by default. Lines are thin. Use shadows rarely.</p>'+
+    '<h2 style="font-family:'+dfont+';color:'+P.text+'">Spacing runs in multiples of four</h2>'+
+    '<p class="lead" style="color:'+P.text3+'">Eleven steps, and nothing in between them. Corners are 16px unless stated otherwise. Rules stay thin, and shadows are used sparingly.</p>'+
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8mm;flex:1">'+
       '<div><div style="display:flex;gap:2mm;align-items:flex-end;margin-bottom:6mm">'+
         [4,8,12,16,20,24,32,40,48,64,80].map(n=>'<div style="text-align:center"><div style="width:'+Math.min(n,40)/2+'mm;height:'+Math.min(n,40)/2+'mm;background:'+P.primary+';border-radius:3px;opacity:'+(0.35+n/140)+'"></div><div style="font-family:'+mfont+';font-size:7px;color:'+P.text3+';margin-top:1mm">'+n+'</div></div>').join("")+
@@ -2244,18 +2276,18 @@ function buildDoc(){
 
   /* 07 quick reference */
   d+=page("Quick reference",7,
-    '<h2 style="font-family:'+dfont+';color:'+P.text+'">Remember these five things</h2>'+
+    '<h2 style="font-family:'+dfont+';color:'+P.text+'">The five rules</h2>'+
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:5mm;margin-top:6mm">'+
-    [["01","Your colour is "+P.primary+". Your background is "+P.bg+". Everything is built on those two."],
-     ["02",f.display+" for headings. "+f.body+" for reading. "+f.mono+" for small labels."],
-     ["03","Round the corners by 16px. Keep lines thin. Size everything in steps of 4."],
-     ["04","Only one extra colour per screen. Write headings like normal sentences, not ALL CAPS."],
-     ["05","Use flat colour. No gradients, no see through panels, no coloured stripes down the side."]]
+    [["01","The primary colour is "+P.primary+", on a "+P.bg+" background. Everything else is built from those two."],
+     ["02",f.display+" for headings, "+f.body+" for reading, "+f.mono+" for small labels."],
+     ["03","Corners at 16px. Rules stay thin. Every measurement is a multiple of four."],
+     ["04","One accent colour per screen. Headings are written as sentences, never in capitals."],
+     ["05","Flat colour throughout. No gradients, no translucent panels, no coloured bars down the side."]]
     .map(r=>'<div class="p-card" style="background:'+P.surface+';border-color:'+P.border+'"><div style="font-family:'+mfont+';font-size:9px;letter-spacing:.14em;color:'+P.primary+';margin-bottom:2mm">'+r[0]+'</div>'+
       '<div style="font-family:'+bfont+';font-size:12px;color:'+P.text2+';line-height:1.55">'+r[1]+'</div></div>').join("")+
     '</div>'+
     '<div style="margin-top:auto;padding-top:6mm;border-top:1.5px solid '+P.border+';font-family:'+mfont+';font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:'+P.text3+';display:flex;justify-content:space-between">'+
-      '<span>'+kit.name+' · brand guidelines v1.0</span><span>BrandKit · a Prompts2Products tool</span></div>');
+      '<span>'+nm+' · brand guidelines v1.0</span><span>BrandKit · a Prompts2Products tool</span></div>');
 
   $("doc").innerHTML=d;
   $("doc").style.fontFamily=bfont;

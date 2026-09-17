@@ -2,6 +2,14 @@
 
 All notable changes to BrandKit are documented here.
 
+## [1.2.0] - 2026-09-17
+
+### Added
+- The brand guide now specifies **clear space** and **minimum size**, the two things anyone placing a logo actually asks for. Clear space is drawn as an exclusion box marked x on all four sides, where x is half the height of the mark. Minimum sizes are shown at actual size for the mark and the lockup
+
+### Changed
+- The brand guide is written in the third person and names the brand, because it is a document handed to other people rather than the tool talking to its user. "Your logo, three ways" is now "The <name> logo", "Your colour carries every interaction" is "The primary colour", and "Remember these five things" is "The five rules". The tool itself still speaks plainly to the person using it
+
 ## [1.1.1] - 2026-09-17
 
 ### Fixed
