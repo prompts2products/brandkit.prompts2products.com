@@ -10,7 +10,7 @@ BrandKit is a single-page tool by [Prompts2Products](https://prompts2products.co
 - **Typography**: a display, body and monospace pairing matched to the chosen style, loaded from Google Fonts.
 - **Logo**: a mark built from a choice of 1,553 searchable icons (Lucide, ISC licence) plus 35 hand-drawn marks, inside a choice of 10 outer shapes. Downloadable as SVG.
 - **Name ideas**: generated offline from a 19-group trade lexicon crossed with real naming patterns, so a bakery gets "Wild Hearth" rather than a random word mashup. An optional button fetches extra ideas from the site's own endpoint, backed by Cloudflare Workers AI.
-- **Downloads**: logo SVG, CSS custom properties, JSON, and a printable brand guide via the browser's print dialogue.
+- **Downloads**: CSS custom properties to copy, a JSON export, and a printable brand guide via the browser's print dialogue.
 
 ## How it works
 

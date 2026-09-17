@@ -2,6 +2,12 @@
 
 All notable changes to BrandKit are documented here.
 
+## [1.2.1] - 2026-09-17
+
+### Removed
+- The Regenerate, Download CSS and Download logo SVG buttons. Download PDF is now the only action on the results header. CSS is still available from the Copy CSS button in the Handoff section and the kit still exports as JSON, so the only capability actually lost is the SVG logo export
+- Claims about an SVG download were removed from the structured data, the README and `llms.txt` so they still describe what the tool does
+
 ## [1.2.0] - 2026-09-17
 
 ### Added

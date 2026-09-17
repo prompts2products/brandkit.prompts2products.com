@@ -45,7 +45,7 @@
         "Font pairing matched to your brand style",
         "Logo with 1,553 searchable icons and 10 outer shapes",
         "Brand name ideas built from your trade, with optional free AI ideas",
-        "Downloadable CSS variables, SVG logo and printable brand guide",
+        "CSS custom properties to copy, a JSON export and a printable brand guide",
         "Runs in your browser with no sign up"
       ],
       "author": { "@type": "Organization", "name": "Prompts2Products", "url": "https://prompts2products.com" }
@@ -76,7 +76,7 @@
         {
           "@type": "Question",
           "name": "What can I download from BrandKit?",
-          "acceptedAnswer": { "@type": "Answer", "text": "You can download your logo as an SVG, your colors as CSS custom properties, the whole kit as JSON, and a printable brand guide as a PDF through your browser's print dialog." }
+          "acceptedAnswer": { "@type": "Answer", "text": "You can copy your colors as CSS custom properties, download the whole kit as JSON, and save a printable brand guide as a PDF through your browser's print dialog." }
         },
         {
           "@type": "Question",
@@ -705,9 +705,6 @@ table.tbl th{font-family:var(--font-mono); font-size:11px; letter-spacing:.14em;
         <p class="meta" id="r-desc"></p>
       </div>
       <div class="actions">
-        <button class="btn btn-ghost btn-sm" id="reroll">Regenerate</button>
-        <button class="btn btn-ghost btn-sm" id="dl-css">Download CSS</button>
-        <button class="btn btn-ghost btn-sm" id="dl-svg">Download logo SVG</button>
         <button class="btn btn-primary btn-sm" id="dl-pdf">Download PDF</button>
         <p class="meta" style="flex-basis:100%;margin-top:4px">In the print box choose <strong>Save as PDF</strong>, landscape, and leave background graphics on.</p>
       </div>
@@ -1765,7 +1762,6 @@ function generate(fresh){
   renderKit(); buildDoc(); scrollTop();
   saveState();
 }
-$("reroll").addEventListener("click",()=>{seed=hashStr(String(seed)+"x"+Math.random());generate(false);toast("New variation")});
 
 function swatch(name,hex,note){
   const ink=bestInk(hex,"#0D0D0D","#FFFFFF");
@@ -2130,8 +2126,6 @@ function download(fname,text,type){
   a.href=u; a.download=fname; document.body.appendChild(a); a.click();
   document.body.removeChild(a); setTimeout(()=>URL.revokeObjectURL(u),2000);
 }
-$("dl-css").addEventListener("click",()=>{download(slug(kit.name)+"-tokens.css",cssTokens(kit),"text/css");toast("CSS downloaded")});
-$("dl-svg").addEventListener("click",()=>{download(slug(kit.name)+"-logo.svg",logoSVG(kit,"primary"),"image/svg+xml");toast("Logo downloaded")});
 $("dl-pdf").addEventListener("click",()=>{buildDoc();setTimeout(()=>window.print(),120)});
 
 /* ============================================================

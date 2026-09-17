@@ -18,7 +18,7 @@ No designer. No account. Nothing uploaded.
 | **Type** | A display, body and mono pairing chosen to match your style |
 | **Logo** | 1,553 searchable icons + 35 hand-drawn marks, in 10 outer shapes, exported as SVG |
 | **Names** | Built from a trade lexicon, not random mashups. Optional free-AI button for more |
-| **Files** | Logo SVG, CSS custom properties, JSON, and a printable brand guide |
+| **Files** | CSS custom properties to copy, a JSON export, and a printable brand guide |
 
 ## Why the colours are trustworthy
 
