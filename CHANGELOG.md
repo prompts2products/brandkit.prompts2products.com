@@ -2,6 +2,12 @@
 
 All notable changes to BrandKit are documented here.
 
+## [1.3.0] - 2026-09-17
+
+### Changed
+- The navbar call to action follows the view. Once a kit exists it reads **Download PDF** and prints, because offering "Build my brand" to someone who has already built one is the wrong next step. The landing page nav links are hidden outside the landing page, since the sections they point at are hidden by then
+- The newsletter card no longer goes quiet forever after one sighting. It now waits by outcome: 7 days if it was only seen, 60 days if it was closed, 180 days if the visitor clicked into the Substack box. That last one is inferred from focus moving to the embed, since a cross-origin iframe cannot report a signup back
+
 ## [1.2.1] - 2026-09-17
 
 ### Removed

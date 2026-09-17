@@ -1709,14 +1709,26 @@ $("restart-top").addEventListener("click",()=>{
   $("results").classList.add("hidden"); $("quiz").classList.add("hidden");
   $("home").classList.remove("hidden"); $("restart-top").classList.add("hidden");
   clearState();
-  renderStep(); scrollTop();
+  renderStep(); syncTopbar(); scrollTop();
 });
 function openQuiz(){
   $("home").classList.add("hidden"); $("results").classList.add("hidden");
   $("quiz").classList.remove("hidden"); $("restart-top").classList.remove("hidden");
-  renderStep(); scrollTop();
+  renderStep(); syncTopbar(); scrollTop();
 }
-["cta-main","cta-bottom","cta-nav"].forEach(id=>{const b=$(id); if(b) b.addEventListener("click",openQuiz)});
+/* Once a kit exists, "Build my brand" is the wrong thing to offer: the brand
+   is built and the next step is taking it away. The landing page links go
+   too, since the sections they point at are hidden by then. */
+function syncTopbar(){
+  const onResults=currentView()==="results";
+  const b=$("cta-nav");
+  if(b) b.textContent=onResults?"Download PDF":"Build my brand";
+  const nav=document.querySelector(".nav-links");
+  if(nav) nav.style.display=(currentView()==="home")?"":"none";
+}
+function printKit(){ if(!kit) return; buildDoc(); setTimeout(()=>window.print(),120) }
+["cta-main","cta-bottom"].forEach(id=>{const b=$(id); if(b) b.addEventListener("click",openQuiz)});
+$("cta-nav").addEventListener("click",()=>{ currentView()==="results"?printKit():openQuiz() });
 $("cta-vibes").addEventListener("click",()=>{
   document.getElementById("styles").scrollIntoView({behavior:"smooth",block:"start"});
 });
@@ -1759,7 +1771,7 @@ function generate(fresh){
   $("restart-top").classList.remove("hidden");
   $("quiz").classList.add("hidden");
   $("results").classList.remove("hidden");
-  renderKit(); buildDoc(); scrollTop();
+  renderKit(); buildDoc(); syncTopbar(); scrollTop();
   saveState();
 }
 
@@ -2126,7 +2138,7 @@ function download(fname,text,type){
   a.href=u; a.download=fname; document.body.appendChild(a); a.click();
   document.body.removeChild(a); setTimeout(()=>URL.revokeObjectURL(u),2000);
 }
-$("dl-pdf").addEventListener("click",()=>{buildDoc();setTimeout(()=>window.print(),120)});
+$("dl-pdf").addEventListener("click",printKit);
 
 /* ============================================================
    6. THE PDF DOCUMENT  : print to PDF, no library, never breaks
@@ -2388,9 +2400,24 @@ function renderVibeGrid(){
    eight seconds of real, visible, on-page time plus a scroll or
    an answer. Asked once, then never again on this browser.
    ------------------------------------------------------------ */
-const NL_KEY="brandkit.nl.v1";
-function nlSeen(){ try{ return !!localStorage.getItem(NL_KEY) }catch(e){ return false } }
-function nlRemember(v){ try{ localStorage.setItem(NL_KEY,v) }catch(e){} }
+const NL_KEY="brandkit.nl.v2";
+/* How long to stay quiet, by how the last ask ended. Merely being seen and
+   ignored is weak evidence, so it comes back in a week. Being closed is a
+   clear no. Clicking into the Substack box means they were signing up, and
+   we cannot see across the iframe to confirm it, so we assume yes. */
+const NL_QUIET={shown:7,closed:60,engaged:180};
+function nlSeen(){
+  try{
+    const raw=localStorage.getItem(NL_KEY);
+    if(!raw) return false;
+    const s=JSON.parse(raw);
+    const days=(Date.now()-(s.t||0))/86400000;
+    return days < (NL_QUIET[s.why]||7);
+  }catch(e){ return false }
+}
+function nlRemember(why){
+  try{ localStorage.setItem(NL_KEY,JSON.stringify({t:Date.now(),why:why})) }catch(e){}
+}
 (function(){
   const el=$("nl"); if(!el||nlSeen()) return;
   let active=0, engaged=false, shown=false, timer=null;
@@ -2418,11 +2445,18 @@ function nlRemember(v){ try{ localStorage.setItem(NL_KEY,v) }catch(e){} }
     nlRemember(how); track("newsletter_dismissed",{how:how});
   };
   $("nl-close").addEventListener("click",()=>dismiss("closed"));
+  /* focus leaving the page for the embed means they are typing an email in it */
+  addEventListener("blur",()=>{
+    if(el.classList.contains("show")&&document.activeElement===$("nl-embed")){
+      nlRemember("engaged"); track("newsletter_engaged");
+    }
+  });
   addEventListener("keydown",e=>{ if(e.key==="Escape"&&el.classList.contains("show")) dismiss("closed") });
 })();
 
 try{ renderStep(); renderFan(); renderVibeGrid(); renderGetBento(); }catch(e){ console.error(e); }
 try{ restoreState(); }catch(e){ console.error(e); clearState(); }
+try{ syncTopbar(); }catch(e){ console.error(e); }
 booted=true;
 saveState();
 window.addEventListener("beforeprint",()=>{ if(kit) buildDoc(); });
