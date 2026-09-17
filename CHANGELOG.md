@@ -2,6 +2,11 @@
 
 All notable changes to BrandKit are documented here.
 
+## [1.5.2] - 2026-09-17
+
+### Added
+- Google Search Console verification meta tag. The property is verified, `sitemap.xml` is submitted and reads Success with 1 page discovered, and indexing has been requested for the homepage. Verification is by meta tag rather than the DNS or uploaded-file methods, so it travels with the page and cannot be lost in a deploy
+
 ## [1.5.1] - 2026-09-17
 
 ### Added
