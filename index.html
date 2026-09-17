@@ -1077,19 +1077,26 @@ function initialsOf(name){
   return w.slice(0,2).toUpperCase();
 }
 const MARK_BY_VIBE={electric:"square",techy:"square",luxe:"ring",natural:"circle",handmade:"square",playful:"blob",soft:"ring",serious:"shield"};
-/* the outer shape the icon sits in. hollow ones draw the icon in the brand
-   colour instead of on top of it, and some need the icon pulled in a bit. */
+/* The outer shape the icon sits in.
+   g  = glyph scale. A shape's bounding box is a bad guide to how big it
+        looks, so every glyph is sized to about 29 units wide instead,
+        and the diamond is capped by its own geometry.
+   tx = where the wordmark starts, measured per shape. A diamond comes to
+        a point exactly at the text's height, so it needs more air than a
+        square whose edge is flat.
+   gy = vertical nudge, for shapes that are not centred on their own mass.
+   hollow = outline shapes, which draw the glyph in the brand colour. */
 const MARKS={
-  square:{label:"Rounded square"},
-  sharp:{label:"Square"},
-  blob:{label:"Squircle"},
-  circle:{label:"Circle"},
-  hex:{label:"Hexagon",scale:0.86},
-  diamond:{label:"Diamond",scale:0.72},
-  shield:{label:"Shield",scale:0.82},
-  ring:{label:"Circle outline",hollow:true,scale:0.8},
-  frame:{label:"Square outline",hollow:true,scale:0.8},
-  none:{label:"No shape",hollow:true,scale:1.18}
+  square:{label:"Rounded square",g:1.21,tx:77},
+  sharp:{label:"Square",g:1.16,tx:76},
+  blob:{label:"Squircle",g:1.23,tx:78},
+  circle:{label:"Circle",g:1.21,tx:78},
+  hex:{label:"Hexagon",g:1.10,tx:75},
+  diamond:{label:"Diamond",g:0.97,tx:82},
+  shield:{label:"Shield",g:1.08,tx:76,gy:-1.5},
+  ring:{label:"Circle outline",hollow:true,g:1.21,tx:78},
+  frame:{label:"Square outline",hollow:true,g:1.18,tx:77},
+  none:{label:"No shape",hollow:true,g:1.95,tx:64}
 };
 const MARK_KEYS=Object.keys(MARKS);
 
@@ -1239,30 +1246,30 @@ function defaultIcon(ans,seed){
   const pool=(ICON_BY_VIBE[ans.vibe]||[]).concat(ICON_BY_CAT[ans.cat]||["sparkle"]);
   return pool[seed%pool.length];
 }
-function glyphSVG(iconKey,fill,initials,dw,font,scale){
+function glyphSVG(iconKey,fill,initials,dw,font,scale,nudge){
   const ic=iconDef(iconKey);
   if(ic.text||!ic.inner){
-    return '<text x="32" y="41" text-anchor="middle" font-family="'+font+', system-ui, sans-serif" font-weight="'+dw+
+    return '<text x="32" y="'+(41+(nudge||0))+'" text-anchor="middle" font-family="'+font+', system-ui, sans-serif" font-weight="'+dw+
       '" font-size="25" letter-spacing="-1.4" fill="'+fill+'">'+initials+'</text>';
   }
-  const sc=(scale||1)*1.32, off=32-12*sc;
+  const sc=scale||1.21, off=32-12*sc, dy=(nudge||0);
   const inner=ic.inner(fill);
-  return '<g transform="translate('+off.toFixed(2)+','+off.toFixed(2)+') scale('+sc.toFixed(3)+')">'+inner+'</g>';
+  return '<g transform="translate('+off.toFixed(2)+','+(off+dy).toFixed(2)+') scale('+sc.toFixed(3)+')">'+inner+'</g>';
 }
 function markSVG(style,fg,ink,glyph){
   switch(style){
-    case "burst": return '<rect x="4" y="4" width="56" height="56" rx="15" fill="'+fg+'"/>'+glyph;
-    case "square": return '<rect x="4" y="4" width="56" height="56" rx="16" fill="'+fg+'"/>'+glyph;
-    case "blob": return '<rect x="3" y="3" width="58" height="58" rx="21" fill="'+fg+'"/>'+glyph;
-    case "circle": return '<circle cx="32" cy="32" r="29" fill="'+fg+'"/>'+glyph;
-    case "ring": return '<circle cx="32" cy="32" r="27" fill="none" stroke="'+fg+'" stroke-width="4.5"/>'+glyph;
+    case "burst": return '<rect x="5" y="5" width="54" height="54" rx="15" fill="'+fg+'"/>'+glyph;
+    case "square": return '<rect x="5" y="5" width="54" height="54" rx="15" fill="'+fg+'"/>'+glyph;
+    case "sharp": return '<rect x="5.5" y="5.5" width="53" height="53" rx="4" fill="'+fg+'"/>'+glyph;
+    case "blob": return '<rect x="4" y="4" width="56" height="56" rx="21" fill="'+fg+'"/>'+glyph;
+    case "circle": return '<circle cx="32" cy="32" r="29.5" fill="'+fg+'"/>'+glyph;
+    case "hex": return '<path d="M32 3.5l25.6 14.75v29.5L32 62.5 6.4 47.75v-29.5z" fill="'+fg+'" stroke="'+fg+'" stroke-width="3" stroke-linejoin="round"/>'+glyph;
+    case "diamond": return '<rect x="10.5" y="10.5" width="43" height="43" rx="6" transform="rotate(45 32 32)" fill="'+fg+'"/>'+glyph;
     case "shield": return '<path d="M32 3l27 9.6v19.9C59 48 47 56.5 32 61 17 56.5 5 48 5 32.5V12.6z" fill="'+fg+'"/>'+glyph;
-    case "sharp": return '<rect x="4" y="4" width="56" height="56" rx="4" fill="'+fg+'"/>'+glyph;
-    case "hex": return '<path d="M32 3l25.1 14.5v29L32 61 6.9 46.5v-29z" fill="'+fg+'" stroke="'+fg+'" stroke-width="3" stroke-linejoin="round"/>'+glyph;
-    case "diamond": return '<rect x="12.6" y="12.6" width="38.8" height="38.8" rx="6" transform="rotate(45 32 32)" fill="'+fg+'"/>'+glyph;
-    case "frame": return '<rect x="5.2" y="5.2" width="53.6" height="53.6" rx="14" fill="none" stroke="'+fg+'" stroke-width="4.5"/>'+glyph;
+    case "ring": return '<circle cx="32" cy="32" r="27.5" fill="none" stroke="'+fg+'" stroke-width="4.5"/>'+glyph;
+    case "frame": return '<rect x="5" y="5" width="54" height="54" rx="15" fill="none" stroke="'+fg+'" stroke-width="4.5"/>'+glyph;
     case "none": return glyph;
-    default: return '<rect x="4" y="4" width="56" height="56" rx="16" fill="'+fg+'"/>'+glyph;
+    default: return '<rect x="5" y="5" width="54" height="54" rx="15" fill="'+fg+'"/>'+glyph;
   }
 }
 /* which palette colours the mark may be painted in */
@@ -1289,23 +1296,24 @@ function logoSVG(kit,variant,px){
   const P=kit.palette, f=P.fonts;
   const brand=logoInk(kit);
   const style=(kit.shape&&MARKS[kit.shape])?kit.shape:(MARK_BY_VIBE[kit.answers.vibe]||"square");
-  const spec=MARKS[style]||MARKS.square, gsc=spec.scale||1;
+  const spec=MARKS[style]||MARKS.square, gsc=spec.g||1.21, gdy=spec.gy||0;
   const name=kit.name, ini=initialsOf(name), iconKey=kit.icon||"sparkle";
   const ringy=!!spec.hollow;
   const inv=variant==="inverse";
   const onBrand=bestInk(brand,"#101010","#FFFFFF");
   const fg=inv?(P.dark?brand:"#FFFFFF"):brand;
   const glyphFill=ringy?fg:(inv?(P.dark?onBrand:brand):onBrand);
-  const glyph=glyphSVG(iconKey,glyphFill,ini,f.dw,f.display,gsc);
+  const glyph=glyphSVG(iconKey,glyphFill,ini,f.dw,f.display,gsc,gdy);
   if(variant==="mark"){
-    const mfg=brand, mglyph=glyphSVG(iconKey,ringy?mfg:onBrand,ini,f.dw,f.display,gsc);
+    const mfg=brand, mglyph=glyphSVG(iconKey,ringy?mfg:onBrand,ini,f.dw,f.display,gsc,gdy);
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="'+(px||64)+'" height="'+(px||64)+'" role="img" aria-label="'+name+' mark">'+markSVG(style,mfg,P.onPrimary,mglyph)+'</svg>';
   }
   const wordFill=inv?"#FFFFFF":P.text;
-  const w=Math.max(220,90+name.length*15.5);
+  const tx=spec.tx||77;
+  const w=Math.max(tx+120,tx+14+name.length*15.5);
   return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+w+' 64" width="'+(px||w)+'" height="'+((px||w)*64/w)+'" role="img" aria-label="'+name+' logo">'+
     markSVG(style,fg,glyphFill,glyph)+
-    '<text x="78" y="41" font-family="'+f.display+', system-ui, sans-serif" font-weight="'+f.dw+'" font-size="27" letter-spacing="-.9" fill="'+wordFill+'">'+name.replace(/&/g,"&amp;")+'</text></svg>';
+    '<text x="'+tx+'" y="41" font-family="'+f.display+', system-ui, sans-serif" font-weight="'+f.dw+'" font-size="27" letter-spacing="-.9" fill="'+wordFill+'">'+name.replace(/&/g,"&amp;")+'</text></svg>';
 }
 function cssTokens(kit){
   const P=kit.palette,f=P.fonts;

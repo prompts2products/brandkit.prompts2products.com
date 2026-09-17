@@ -2,6 +2,12 @@
 
 All notable changes to BrandKit are documented here.
 
+## [1.1.1] - 2026-09-17
+
+### Fixed
+- Logo marks were optically inconsistent. A shape's bounding box is a poor guide to how big it looks, so every shape is now drawn to carry the same visual weight and every glyph is sized to the same optical width rather than to a per-shape guess. The diamond and hexagon were reading small and starved, while the ring and square outline had a glyph lost in the middle of them
+- The wordmark started at a fixed x for every shape, so a diamond, which comes to a point at exactly the height of the text, almost touched the first letter. Each shape now sets where the wordmark begins
+
 ## [1.1.0] - 2026-09-17
 
 ### Added
