@@ -1,0 +1,27 @@
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs & temp
+*.log
+.cache/
+tmp/
+
+# Local dev / tooling (BrandKit needs none of these to run)
+node_modules/
+.env
+.env.local
+
+# Claude Code / preview tooling (local only)
+.claude/
+
+# Build output
+dist/

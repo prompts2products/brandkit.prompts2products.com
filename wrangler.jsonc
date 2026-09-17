@@ -1,0 +1,23 @@
+{
+  "$schema": "https://unpkg.com/wrangler/config-schema.json",
+  "name": "brandkit-prompts2products-com",
+  "compatibility_date": "2026-09-17",
+
+  // Static site only: scripts/inject-analytics.js writes dist/ from index.html.
+  "build": {
+    "command": "node scripts/inject-analytics.js"
+  },
+  "assets": {
+    "directory": "dist",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "single-page-application"
+  },
+
+  "workers_dev": true,
+  "routes": [
+    {
+      "pattern": "brandkit.prompts2products.com",
+      "custom_domain": true
+    }
+  ]
+}

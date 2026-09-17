@@ -1,0 +1,32 @@
+# BrandKit
+
+> A free brand kit generator. Answer five plain-English questions and get a complete brand identity: an accessible colour palette, a font pairing, a logo, brand name ideas and a printable brand guide. No account, no card, no design skills. It runs entirely in the visitor's browser.
+
+BrandKit is a single-page tool by [Prompts2Products](https://prompts2products.com), a free community where people with no coding background build real software with AI. It is open source under the MIT licence.
+
+## What it does
+
+- **Colour palette**: generated in the OKLCH colour space from the user's answers. Every pair that carries text is contrast-checked and corrected before it renders, so kits pass WCAG AA by construction rather than by luck. Output includes primary, hover, soft, secondary, accent, background, surface, borders, four ink steps, semantic status colours and a 50 to 900 ramp.
+- **Typography**: a display, body and monospace pairing matched to the chosen style, loaded from Google Fonts.
+- **Logo**: a mark built from a choice of 1,553 searchable icons (Lucide, ISC licence) plus 35 hand-drawn marks, inside a choice of 10 outer shapes. Downloadable as SVG.
+- **Name ideas**: generated offline from a 19-group trade lexicon crossed with real naming patterns, so a bakery gets "Wild Hearth" rather than a random word mashup. An optional button fetches extra ideas from a free AI service.
+- **Downloads**: logo SVG, CSS custom properties, JSON, and a printable brand guide via the browser's print dialogue.
+
+## How it works
+
+The user answers five questions (what they are making, their style, how bright the colours should be, how many colours, and the background colour), plus one optional question about their trade which drives the icon and name suggestions. Every option shows a live preview of the actual colours it produces. If none of the options fit, a free-text box reads what the user wrote using keyword scoring, with no AI call.
+
+## Key facts
+
+- Price: free, with no sign up and no usage limit
+- Privacy: answers are stored only in the visitor's own browser local storage; nothing is uploaded unless the visitor presses the optional AI name ideas button
+- Technology: one HTML file, zero JavaScript dependencies, works offline
+- Accessibility: WCAG AA contrast enforced at generation time
+- Licence: MIT
+
+## Links
+
+- [BrandKit, the tool](https://brandkit.prompts2products.com/)
+- [Source code on GitHub](https://github.com/prompts2products/brandkit.prompts2products.com)
+- [Prompts2Products](https://prompts2products.com)
+- [LogoGrid, a companion tool that tests a logo on 20 backgrounds](https://logogrid.prompts2products.com/)
