@@ -2528,5 +2528,10 @@ booted=true;
 saveState();
 window.addEventListener("beforeprint",()=>{ if(kit) buildDoc(); });
 </script>
+<!-- Cloudflare Web Analytics. The token is a public site identifier, not a
+     credential: it is visible in the page source to every visitor by design,
+     which is why it sits here rather than in the build-time secret injection
+     used for GA and Clarity. Privacy-first, no cookies, nothing to consent to. -->
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "e5838049944f486b8ab9cd656a2d399a"}'></script>
 </body>
 </html>

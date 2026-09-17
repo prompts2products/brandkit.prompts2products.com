@@ -2,6 +2,11 @@
 
 All notable changes to BrandKit are documented here.
 
+## [1.5.1] - 2026-09-17
+
+### Added
+- Cloudflare Web Analytics on brandkit.prompts2products.com. The existing account site only covered the apex `prompts2products.com`, so the subdomain was counting nothing. A separate site was registered and its beacon installed. The token is a public site identifier that ships in the page source by design, so it lives in the source rather than the build-time injection used for GA and Clarity, which keeps analytics from silently switching off on a deploy from another machine
+
 ## [1.5.0] - 2026-09-17
 
 ### Security
