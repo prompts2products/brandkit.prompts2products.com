@@ -2,6 +2,16 @@
 
 All notable changes to BrandKit are documented here.
 
+## [1.5.0] - 2026-09-17
+
+### Security
+- Audited for exposed credentials: none exist. Workers AI is reached through the `env.AI` binding, which Cloudflare resolves inside the runtime, so there is no key in the page, the repo or the worker source. The live page, the full git history and the working tree were all scanned for key-shaped strings and came back clean
+- `/api/names` was open to the world, so anyone could spend the account's AI allowance. It now accepts requests only from this site's own origin and is rate limited to 8 per minute per IP
+- Error responses no longer return raw exception text. The earlier deprecated-model failure had been disclosing internal model identifiers and Cloudflare error codes to the public; those are logged instead
+
+### Fixed
+- The newsletter card, icon sheet and toast printed into the PDF. They sit outside the app shell so they never picked up `.noprint`
+
 ## [1.4.1] - 2026-09-17
 
 ### Fixed

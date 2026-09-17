@@ -9,6 +9,15 @@
     "binding": "AI"
   },
 
+  // Caps how fast one visitor can spend the AI allowance.
+  "ratelimits": [
+    {
+      "name": "NAMES_RATE",
+      "namespace_id": "1001",
+      "simple": { "limit": 8, "period": 60 }
+    }
+  ],
+
   // Static site only: scripts/inject-analytics.js writes dist/ from index.html.
   "build": {
     "command": "node scripts/inject-analytics.js"

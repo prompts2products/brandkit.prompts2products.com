@@ -13,16 +13,34 @@
  */
 
 const MODEL = "@cf/meta/llama-3.1-8b-instruct-fp8";
-const CORS = {
-  "Access-Control-Allow-Origin": "*",
+
+/**
+ * There is no API key anywhere in this project. Workers AI is reached
+ * through the env.AI binding, which Cloudflare resolves inside the
+ * runtime, so no credential exists to leak: not in the page, not in the
+ * repo, not in this file. The browser only ever sees /api/names.
+ *
+ * What does need protecting is the account's AI allowance, since this
+ * endpoint spends it. Hence the origin check and the rate limit below.
+ */
+const ALLOWED_ORIGINS = [
+  "https://brandkit.prompts2products.com",
+  "https://brandkit-prompts2products-com.prompts2products.workers.dev",
+];
+const isAllowedOrigin = (o) =>
+  !!o && (ALLOWED_ORIGINS.includes(o) || /^http:\/\/localhost(:\d+)?$/.test(o));
+
+const corsFor = (origin) => ({
+  "Access-Control-Allow-Origin": isAllowedOrigin(origin) ? origin : ALLOWED_ORIGINS[0],
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
-};
+  "Vary": "Origin",
+});
 
-const json = (body, status = 200) =>
+const json = (body, status = 200, origin = "") =>
   new Response(JSON.stringify(body), {
     status,
-    headers: { "Content-Type": "application/json", ...CORS },
+    headers: { "Content-Type": "application/json", ...corsFor(origin) },
   });
 
 /** Keep the model's answer to things that look like brand names. */
@@ -48,15 +66,28 @@ export default {
     const url = new URL(request.url);
 
     if (url.pathname === "/api/names") {
-      if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
-      if (request.method !== "POST") return json({ error: "Use POST" }, 405);
-      if (!env.AI) return json({ error: "Workers AI is not bound to this worker" }, 501);
+      const origin = request.headers.get("Origin") || "";
+
+      if (request.method === "OPTIONS") return new Response(null, { headers: corsFor(origin) });
+      if (request.method !== "POST") return json({ error: "Use POST" }, 405, origin);
+
+      // This endpoint exists for the page in front of it. Anything else is
+      // spending someone else's AI allowance.
+      if (!isAllowedOrigin(origin)) return json({ error: "Not allowed" }, 403, origin);
+
+      if (env.NAMES_RATE) {
+        const ip = request.headers.get("CF-Connecting-IP") || "anon";
+        const { success } = await env.NAMES_RATE.limit({ key: ip });
+        if (!success) return json({ error: "Too many requests. Try again in a minute." }, 429, origin);
+      }
+
+      if (!env.AI) return json({ error: "Name service unavailable" }, 503, origin);
 
       let body;
       try {
         body = await request.json();
       } catch {
-        return json({ error: "Bad JSON" }, 400);
+        return json({ error: "Bad request" }, 400, origin);
       }
 
       // Never pass visitor text straight through at length.
@@ -78,10 +109,13 @@ export default {
           max_tokens: 160,
         });
         const names = parseNames(out.response);
-        if (!names.length) return json({ error: "Nothing usable came back" }, 502);
-        return json({ names });
+        if (!names.length) return json({ error: "Nothing usable came back" }, 502, origin);
+        return json({ names }, 200, origin);
       } catch (err) {
-        return json({ error: "Model call failed", detail: String(err).slice(0, 200) }, 502);
+        // Logged for us, not returned: the raw error names internal models
+        // and Cloudflare error codes, which the public does not need.
+        console.error("names endpoint failed:", err);
+        return json({ error: "The model did not answer" }, 502, origin);
       }
     }
 
