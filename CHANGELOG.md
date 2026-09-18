@@ -2,6 +2,12 @@
 
 All notable changes to BrandKit are documented here.
 
+## [1.5.3] - 2026-09-18
+
+### Added
+- GA4 and Microsoft Clarity, each with a property of its own for BrandKit, matching how LogoGrid is set up. The IDs live in Cloudflare build variables and a git-ignored `.env`, never in the repo, so forks of this public repo do not report into our analytics. Checked live: GA4 collect hits and Clarity collect calls both fire from the page
+- The Worker is connected to this repo through Cloudflare Workers Builds, with preview builds for other branches turned off
+
 ## [1.5.2] - 2026-09-17
 
 ### Added

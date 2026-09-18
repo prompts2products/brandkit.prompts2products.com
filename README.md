@@ -73,11 +73,15 @@ With no env vars set, the placeholders are blanked and analytics simply stays of
 
 `wrangler.jsonc` is already configured: it runs the build command, serves `dist/`, and binds the custom domain.
 
+The Worker is connected to this repo through Cloudflare Workers Builds, so a push to `main` builds and deploys. The build command is left empty on purpose, since `wrangler deploy` runs the build from `wrangler.jsonc` itself. `GA_MEASUREMENT_ID` and `CLARITY_PROJECT_ID` are set as **build variables** in the Worker's settings, which is where the build picks them up.
+
+To deploy by hand instead, put the same two IDs in a local `.env` (git-ignored) and run:
+
 ```bash
 npx wrangler deploy
 ```
 
-Set `GA_MEASUREMENT_ID` and `CLARITY_PROJECT_ID` as environment variables in the Cloudflare dashboard so they're injected at build time.
+Analytics on the live site: GA4 and Microsoft Clarity through those build variables, plus Cloudflare Web Analytics, whose beacon token is in `index.html` because it is a public identifier that ships in the page anyway.
 </details>
 
 ## Credits
