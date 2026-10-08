@@ -75,9 +75,14 @@ export default {
       // spending someone else's AI allowance.
       if (!isAllowedOrigin(origin)) return json({ error: "Not allowed" }, 403, origin);
 
-      if (env.NAMES_RATE) {
+      // During an event a whole room can share one IP, so it gets the
+      // looser limit. Once EVENT_UNTIL passes this goes back on its own.
+      const eventOn = Date.now() < Date.parse(env.EVENT_UNTIL || "");
+      const limiter = (eventOn && env.NAMES_RATE_EVENT) || env.NAMES_RATE;
+
+      if (limiter) {
         const ip = request.headers.get("CF-Connecting-IP") || "anon";
-        const { success } = await env.NAMES_RATE.limit({ key: ip });
+        const { success } = await limiter.limit({ key: ip });
         if (!success) return json({ error: "Too many requests. Try again in a minute." }, 429, origin);
       }
 

@@ -9,15 +9,27 @@
     "binding": "AI"
   },
 
-  // Caps how fast one IP can spend the AI allowance. Sized for a room of
-  // ~100 people sharing one Wi-Fi IP, not for a single visitor.
+  // Caps how fast one visitor can spend the AI allowance.
+  // NAMES_RATE_EVENT is a looser cap for a room of people sharing one
+  // Wi-Fi IP. The worker only uses it until EVENT_UNTIL, then falls back
+  // to NAMES_RATE by itself, so nobody has to remember to undo it.
   "ratelimits": [
     {
       "name": "NAMES_RATE",
       "namespace_id": "1001",
+      "simple": { "limit": 8, "period": 60 }
+    },
+    {
+      "name": "NAMES_RATE_EVENT",
+      "namespace_id": "1002",
       "simple": { "limit": 150, "period": 60 }
     }
   ],
+
+  "vars": {
+    // ISO time, UTC. Empty or in the past means the normal limit applies.
+    "EVENT_UNTIL": "2026-10-10T12:00:00Z"
+  },
 
   // Static site only: scripts/inject-analytics.js writes dist/ from index.html.
   "build": {
