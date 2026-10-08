@@ -9,12 +9,13 @@
     "binding": "AI"
   },
 
-  // Caps how fast one visitor can spend the AI allowance.
+  // Caps how fast one IP can spend the AI allowance. Sized for a room of
+  // ~100 people sharing one Wi-Fi IP, not for a single visitor.
   "ratelimits": [
     {
       "name": "NAMES_RATE",
       "namespace_id": "1001",
-      "simple": { "limit": 8, "period": 60 }
+      "simple": { "limit": 150, "period": 60 }
     }
   ],
 
